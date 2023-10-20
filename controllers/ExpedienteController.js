@@ -13,15 +13,15 @@ const registro_expediente = async function (req, res) {
           const empresaId = req.user.sub;
           //penales
           var img_path = req.files.penales.path;
-          var name = img_path.split("\\");
+          var name = img_path.split("/");
           var portada_name = name[2];
           //dpi
           var dpi_path = req.files.dpi.path;
-          var namee = dpi_path.split("\\");
+          var namee = dpi_path.split("/");
           var dpi_name = namee[2];   
          //policiacos
          var poli_path = req.files.policiacos.path;
-         var nameee = poli_path.split("\\");
+         var nameee = poli_path.split("/");
          var poli_name = nameee[2];   
           console.log(req.user.sub);
           // Verificar si ya existe un expediente con el mismo id de empleado
@@ -115,7 +115,7 @@ const editar_expediente = async function (req, res) {
 
         // Guardar el archivo nuevo
         var img_path = req.files.penales.path;
-        var name = img_path.split("\\");
+        var name = img_path.split("/");
         var portada_name = name[2];
         expedienteExistente.penales = portada_name;
       }
@@ -130,7 +130,7 @@ const editar_expediente = async function (req, res) {
         }
         //dpi nuevo
         var dpi_path = req.files.dpi.path;
-        var namee = dpi_path.split("\\");
+        var namee = dpi_path.split("/");
         var dpi_name = namee[2];
         expedienteExistente.dpi = dpi_name;
       }
@@ -145,7 +145,7 @@ const editar_expediente = async function (req, res) {
         }
         //policiacos nuevos
         var poli_path = req.files.policiacos.path;
-        var nameee = poli_path.split("\\");
+        var nameee = poli_path.split("/");
         var poli_name = nameee[2];
         expedienteExistente.policiacos = poli_name;
       }
