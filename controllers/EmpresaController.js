@@ -144,7 +144,7 @@ async function enviarCorreoDatosVerificados(empresa) {
                                 </tr>
                                 <tr>
                                   <td valign="top" width="50%" align="center"> <span>
-                                      <a href="http://localhost:4200/login/iniciar_sesion" style="display:block; padding:15px 25px; background-color:#80CC28; color:#ffffff; border-radius:7px; text-decoration:none;">Iniciar Sesion</a>
+                                      <a href="https://sair.site/login/iniciar_sesion" style="display:block; padding:15px 25px; background-color:#80CC28; color:#ffffff; border-radius:7px; text-decoration:none;">Iniciar Sesion</a>
                                     </span>
   
                                   </td>
@@ -210,7 +210,7 @@ const confirm = async (req, res) => {
     }
     // Verificar el código
     if (codigo !== user.codigo) {
-      return res.redirect("http://localhost:4200/login/error");
+      return res.redirect("https://www.sair.site/login/error");
     }
     // Actualizar usuario
     user.status = "VERIFICADO";
@@ -218,7 +218,7 @@ const confirm = async (req, res) => {
     // Llama a la función para enviar el correo con los datos
     await enviarCorreoDatosVerificados(user);
     // Redireccionar a la confirmación
-    return res.redirect("http://localhost:4200/login/confirmacion");
+    return res.redirect("https://www.sair.site/login//confirmacion");
   } catch (error) {
     console.log(error);
     return res.json({
