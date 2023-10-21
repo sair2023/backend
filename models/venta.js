@@ -17,7 +17,8 @@ var VentaSchema = Schema({
     cliente: {type: String, require: true},
     total: {type: Number, require: true},
     fecha_venta: {type: Date, require: true},
-    empleadoId: {type: Schema.ObjectId, ref: 'empleado', require: true },
+    nombre_emple:{type: String, require: true},
+    usuarioId: {type: Schema.ObjectId, ref: 'usuario', require: true },
     empresaId: {type: Schema.ObjectId, ref: 'empresa', require: true },
     createdAt:{type:Date, default: Date.now, require:true}
 });

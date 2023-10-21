@@ -7,7 +7,7 @@ const registrarVenta = async function(req, res) {
     try {
       if (req.user && (req.user.rol === "ADMIN" || req.user.rol === "EMPLE")) {
         const ventaData = req.body;
-        const empleadoId = req.user.id; // ID del empleado
+        const usuarioId = req.user.id; // ID del empleado
         const empresaId = req.user.sub; // ID de la empresa se encuentra 
   
         // Verificar si ya existe una venta con la misma descripción
@@ -24,7 +24,8 @@ const registrarVenta = async function(req, res) {
             cliente: ventaData.cliente,
             total: ventaData.total,
             fecha_venta: ventaData.fecha_venta,
-            empleadoId: empleadoId,
+            usuarioId: usuarioId,
+            nombre_emple: ventaData.nombre_emple,
             empresaId: empresaId,
           });
   
@@ -42,15 +43,15 @@ const registrarVenta = async function(req, res) {
 
   //metodo para listar ventas
   const listar_venta_individual = async function (req, res) {
-    if (req.user && (req.user.rol === "ADMIN" || req.user.rol === "EMPLE")) {
+    if (req.user && (req.user.rol === "ADMIN" || req.user.rol === "EMPLE"|| req.user.rol === "EMPRESA")) {
         const empresaId = req.user.sub;
-        const empleadoId = req.params.empleadoId;
+        const usuarioId = req.params.usuarioId;
         const cliente = req.query.cliente || null;
         const total = req.query.total || null;
 
         try {
             let query = {
-                empleadoId: empleadoId,
+                usuarioId: usuarioId,
                 empresaId: empresaId,
             };
 
@@ -64,7 +65,7 @@ const registrarVenta = async function(req, res) {
                 query.total = parseFloat(total); // Asegúrate de que el total sea un número
             }
 
-            const ventas = await Venta.find(query);
+            const ventas = await Venta.find(query).populate('usuarioId');
             res.status(200).send({ data: ventas });
         } catch (error) {
             res.status(500).send({ message: "Error en el servidor", data: undefined });
@@ -80,7 +81,7 @@ const obtener_ventas = async function (req, res) {
     if (req.user.rol == "ADMIN" || req.user.rol === "EMPRESA" || req.user.rol === "EMPLE" ) {
       var id = req.params["id"];
       try {
-        var reg = await Venta.findById({ _id: id }).populate('empleadoId');
+        var reg = await Venta.findById({ _id: id });
         res.status(200).send({ data: reg });
       } catch (error) {
         res.status(200).send({ data: undefined });
@@ -123,11 +124,45 @@ const eliminar_venta = async function (req, res) {
   }
 };
   
+const listar_ventas = async function (req, res) {
+  if (req.user && (req.user.rol === "ADMIN" || req.user.rol === "EMPRESA")) {
+      const fechaInicio = req.query.fechaInicio || null;
+      const fechaFin = req.query.fechaFin || null;
+
+      try {
+          let query = {};
+
+          if (fechaInicio && fechaFin) {
+              // Filtro por rango de fechas si se proporciona ambas fechas
+              query.fecha_venta = {
+                  $gte: new Date(fechaInicio + "T00:00:00.000Z"), // Desde las 00:00:00
+                  $lte: new Date(fechaFin + "T23:59:59.999Z")  // Hasta las 23:59:59
+              };
+          } else if (fechaInicio) {
+              // Filtro para una fecha específica si solo se proporciona la fecha de inicio
+              query.fecha_venta = {
+                  $gte: new Date(fechaInicio + "T00:00:00.000Z"),
+                  $lte: new Date(fechaInicio + "T23:59:59.999Z")
+              };
+          }
+
+          const ventas = await Venta.find(query).populate('usuarioId')
+          res.status(200).send({ data: ventas });
+      } catch (error) {
+          res.status(500).send({ message: "Error en el servidor", data: undefined });
+      }
+  } else {
+      res.status(403).send({ message: "Acceso no autorizado" });
+  }
+};
+
+
 
 
 module.exports = {
     registrarVenta,
     listar_venta_individual,
     obtener_ventas,
-    eliminar_venta
+    eliminar_venta,
+    listar_ventas
 }

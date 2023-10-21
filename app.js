@@ -6,7 +6,7 @@ var app = express();
 var bodyparser = require('body-parser');
 var mongoose = require('mongoose');
 var port = process.env.PORT || 4201;
-
+const cors = require('cors');
 //Variable para rutas
 var usuario_route = require('./routes/usuario');
 var empresta_route = require('./routes/empresa');
@@ -31,13 +31,14 @@ const databese = module.exports = () =>{
 }
 
 //permite la conexion entre back y front
-app.use((req,res,next)=>{
-    res.header('Access-Control-Allow-Origin','*'); 
-    res.header('Access-Control-Allow-Headers','Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Access-Control-Allow-Request-Method');
-    res.header('Access-Control-Allow-Methods','GET, PUT, POST, DELETE, OPTIONS');
-    res.header('Allow','GET, PUT, POST, DELETE, OPTIONS');
-    next();
-});
+// app.use((req,res,next)=>{
+//     res.header('Access-Control-Allow-Origin','*'); 
+//     res.header('Access-Control-Allow-Headers','Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Access-Control-Allow-Request-Method');
+//     res.header('Access-Control-Allow-Methods','GET, PUT, POST, DELETE, OPTIONS');
+//     res.header('Allow','GET, PUT, POST, DELETE, OPTIONS');
+//     next();
+// });
+app.use(cors());
 
 app.listen(port, () =>{
     console.log('server corriendo en el puerto '+ port);
