@@ -1,16 +1,12 @@
 var express = require('express');
 var productoController = require('../controllers/ProductoController');
-
+var validacion = require('../middlewares/authenticate');
 var api = express.Router();
 
-// api.post('/producto/registrar',path,productoController.registrar);
-// api.get('/productos/:titulo?',productoController.listar);
-// api.get('/productoos/:descripcion?',productoController.listar2);
-// api.put('/producto/editar/:id/:img?',path,productoController.editar);
-// api.get('/producto/:id',productoController.obtener_producto);
-// api.delete('/producto/:id',productoController.eliminar);
-// api.put('/producto/stock/:id',productoController.update_stock);
-// api.get('/producto/img/:img',productoController.get_img),
-// api.get('/total',productoController.total),
+api.post('/registro_producto',validacion.auth,productoController.registro_producto);
+api.get('/listar_producto',validacion.auth,productoController.listar_productos);
+api.delete('/eliminar_producto/:id',validacion.auth,productoController.eliminar_productos);
+api.get('/obtener_producto/:id',validacion.auth,productoController.obtener_producto);
+
 
 module.exports = api;

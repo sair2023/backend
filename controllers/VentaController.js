@@ -156,7 +156,39 @@ const listar_ventas = async function (req, res) {
   }
 };
 
+async function calcularTotalVentas(req, res) {
+  try {
+      // Verifica si el usuario tiene el rol de "ADMIN" o "EMPRESA"
+      if (req.user && (req.user.rol === "ADMIN" || req.user.rol === "EMPRESA")) {
+          // Obtiene el ID de usuario de los parámetros de consulta
+          const userId = req.query.usuarioId;
+          
+          // Obtiene el mes y año actuales
+          const mesActual = new Date().getMonth(); // Mes en JavaScript es 0-indexed (enero = 0)
+          const anioActual = new Date().getFullYear();
 
+          // Realiza una consulta para encontrar todas las ventas del usuario en el mes y año actuales
+          const ventasEnMes = await Venta.find({
+              fecha_venta: {
+                  $gte: new Date(anioActual, mesActual, 1),
+                  $lt: new Date(anioActual, mesActual + 1, 1)
+              },
+              usuarioId: userId
+          });
+
+          // Calcula el total de ventas sumando los valores del campo "total" de cada venta
+          const totalVentasEnMes = ventasEnMes.reduce((total, venta) => total + venta.total, 0);
+
+          res.status(200).json({ totalVentas: totalVentasEnMes });
+      } else {
+          // Si el usuario no tiene los permisos necesarios, devuelve un mensaje de error
+          res.status(403).json({ error: 'Acceso no autorizado.' });
+      }
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al calcular el total de ventas.' });
+  }
+}
 
 
 module.exports = {
@@ -164,5 +196,6 @@ module.exports = {
     listar_venta_individual,
     obtener_ventas,
     eliminar_venta,
-    listar_ventas
+    listar_ventas,
+    calcularTotalVentas
 }

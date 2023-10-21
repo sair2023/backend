@@ -5,7 +5,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var PagosSchema = Schema({
-    horas_dobles: {type: Number, require: true},
     horas_extras: {type: Number, require: true},
     comision: {type: Number, require: true},
     bonificacion: {type: Number, require: true},
@@ -13,7 +12,6 @@ var PagosSchema = Schema({
     status: {type: String, require: true},
     deparId: {type: Schema.ObjectId, ref: 'departamento',require: true},
     ventaId: {type: Schema.ObjectId, ref: 'venta',require: true},
-    produccionId: {type: Schema.ObjectId, ref: 'produccion',require: true},
     empleadoId: {type: Schema.ObjectId, ref: 'empleado', require: true },
     empresaId: {type: Schema.ObjectId, ref: 'empresa', require: true },
     createdAt:{type:Date, default: Date.now, require:true}

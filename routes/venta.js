@@ -8,5 +8,6 @@ api.get('/ventas_empleado/:usuarioId', validacion.auth, ventaController.listar_v
 api.get('/obtener_venta/:id',validacion.auth,ventaController.obtener_ventas);
 api.delete('/eliminar_venta/:id',validacion.auth,ventaController.eliminar_venta);
 api.get('/listar_ventas', validacion.auth, ventaController.listar_ventas);
+api.get('/calcular_total_ventas', validacion.auth, ventaController.calcularTotalVentas);
 
 module.exports = api;

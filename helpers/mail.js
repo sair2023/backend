@@ -250,7 +250,7 @@ const getTemplete = (nombre, token)=>{
                           <td style="text-align:center; margin:0 auto;">
                             <br>
                             <div>
-                              <a class="verificar-email w280" href="http://localhost:4201/api/confirmacion/${token}"  target="_blank" style="background-color:#80CC28;color:#ffffff;display:inline-block;font-family:'Open Sans', Roboto, Helvetica Neue, sans-serif;font-size:16px;font-weight: bold;line-height:50px;text-align:center;text-decoration:none;border-radius:40px;box-shadow: 0 5px 10px 0 rgba(27,27,27,100);-webkit-text-size-adjust:none; min-width:200px;">Confirmar Cuenta</a>
+                              <a class="verificar-email w280" href="https://api.sair.site/api/confirmacion/${token}"  target="_blank" style="background-color:#80CC28;color:#ffffff;display:inline-block;font-family:'Open Sans', Roboto, Helvetica Neue, sans-serif;font-size:16px;font-weight: bold;line-height:50px;text-align:center;text-decoration:none;border-radius:40px;box-shadow: 0 5px 10px 0 rgba(27,27,27,100);-webkit-text-size-adjust:none; min-width:200px;">Confirmar Cuenta</a>
                 
                             </div>
                             <br>

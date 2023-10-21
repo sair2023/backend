@@ -2,16 +2,11 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
  
 var ProductoSchema = Schema({
-    titulo: String,
-    descripcion: String,
-    presentacion: String,
-    imagen: String,
-    precio_compra: Number,
-    precio_venta: Number,
-    stock: Number,
-    fecha_vencimiento: String,
-    idcategoria: {type: Schema.ObjectId, ref: 'categoria'},
-    idmarca: {type: Schema.ObjectId, ref: 'marca'},
+    codigo: {type:String, require: true},
+    titulo: {type:String, require: true},
+    precio: {type: Number , require: true},
+    empresaId: {type: Schema.ObjectId, ref: 'empresa', require: true },
+    createdAt:{type:Date, default: Date.now, require:true}
 });
 
-module.exports = mongoose.model('producto',ProductoSchema);
+module.exports = mongoose.model('producto',ProductoSchema); 

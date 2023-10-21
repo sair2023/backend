@@ -1,239 +1,109 @@
-var Producto = require('../models/producto');
-var fs = require('fs');
-var path = require('path');
+"use strict";
 
+//variables
+var Producto = require("../models/producto");
 
-function registrar(req,res){
-    
-    var data = req.body;
+const registro_producto = async function (req, res) {
+    try {
+      if (req.user && req.user.rol === "ADMIN" || req.user.rol === "EMPRESA") {
+        const data = req.body;
+        const empresaId = req.user.sub;
 
-    if(req.files){
-        var imagen_path = req.files.imagen.path;
-        var name = imagen_path.split('\\');
-        var imagen_name = name[2];
-
-        var producto = new Producto();
-        producto.titulo = data.titulo;
-        producto.descripcion = data.descripcion;
-        producto.presentacion = data.presentacion;
-        producto.lote = data.lote;
-        producto.imagen = imagen_name;
-        producto.precio_compra = data.precio_compra;
-        producto.precio_venta = data.precio_venta;
-        producto.stock = data.stock;
-        producto.fecha_vencimiento = data.fecha_vencimiento;
-        producto.idcategoria = data.idcategoria;
-        producto.idmarca = data.idmarca;
-        producto.puntos = data.puntos;
-
-        producto.save((err,producto_save)=>{
-            if(err){
-                res.status(500).send({message: 'Error en el servidor'});
-            }else{
-                if(producto_save){
-                    res.status(200).send({produto: producto_save});
-                }else{
-                    res.status(403).send({message: 'No se registro el producto'}); 
-                }
-            }
-        });
-    }else{
-        var producto = new Producto();
-        producto.titulo = data.titulo;
-        producto.descripcion = data.descripcion;
-        producto.presentacion = data.presentacion;
-        producto.lote = data.lote;
-        producto.imagen = null;
-        producto.precio_compra = data.precio_compra;
-        producto.precio_venta = data.precio_venta;
-        producto.stock = data.stock;
-        producto.fecha_vencimiento = data.fecha_vencimiento;
-        producto.idcategoria = data.idcategoria;
-        producto.idmarca = data.idmarca;
-        producto.puntos = data.puntos;
-
-        producto.save((err,producto_save)=>{
-            if(err){
-                res.status(500).send({message: 'Error en el servidor'});
-            }else{
-                if(producto_save){
-                    res.status(200).send({produto: producto_save});
-                }else{
-                    res.status(403).send({message: 'No se registro el producto'}); 
-                }
-            }
-        });
-    }
-    
-}
-
-function total(req, res){
-    Producto.find().countDocuments().exec((err,total)=>{
-        if (err) {
-            res.status(500).send({message: 'Error en el servidor'});
-        }else{
-            if (total) {
-                res.status(200).send({productos:total});
-            } else{
-                res.status(403).send({message: 'No se pudo realizar'});
-            }
-        }
-    });
-}
-
-
-function listar(req,res){
-    var titulo = req.params['titulo'];
-   
-    Producto.find({titulo: new RegExp(titulo,'i')}).populate('idcategoria').exec((err,productos_listado)=>{
-        if(err){
-            res.status(500).send({message: 'Error en el servidor'});
-        }else{
-            if(productos_listado){
-                res.status(200).send({productos:productos_listado});
-            }else{
-                res.status(403).send({message: 'No hay ningun registro con ese titulo'});
-            }
-        }
-    });
-}
-function listar2(req,res){
-    var descripcion = req.params['descripcion'];
-   
-    Producto.find({descripcion: new RegExp(descripcion,'i')}).populate('idcategoria').exec((err,productos_listado)=>{
-        if(err){
-            res.status(500).send({message: 'Error en el servidor'});
-        }else{
-            if(productos_listado){
-                res.status(200).send({productos:productos_listado});
-            }else{
-                res.status(403).send({message: 'No hay ningun registro con ese titulo'});
-            }
-        }
-    });
-}
-
-function editar(req,res){
-
-    var data = req.body;
-    var id = req.params['id'];
-    var img = req.params['img'];
-
-    if(req.files.imagen){
-         fs.unlinkSync('./uploads/productos/'+img, (err)=>{
-                if(err) throw err;
-            });
+        console.log(req.user.sub);     
+        // Verificar si ya existe un producto con el mismo título
+        const productpExistente = await Producto.findOne({ codigo: data.codigo });
         
-        var imagen_path = req.files.imagen.path;
-        var name = imagen_path.split('\\');
-        var imagen_name = name[2];
-
-        Producto.findByIdAndUpdate({_id:id},{titulo: data.titulo, descripcion: data.descripcion, presentacion: data.presentacion, lote: data.lote, imagen:imagen_name, precio_compra: data.precio_compra, precio_venta: data.precio_venta, fecha_vencimiento: data.fecha_vencimiento, idcategoria: data.idcategoria, idmarca: data.idmarca, puntos: data.puntos}, (err, producto_edit) =>{
-            if(err){
-                res.status(500).send({message: 'Error en el servidor'});
-            }else{
-                if(producto_edit){
-                    res.status(200).send({producto: producto_edit});
-                }else{
-                    res.status(403).send({message: 'No se edito el producto'});
-                }
-            }
-        });
-    }else{
-        Producto.findByIdAndUpdate({_id:id},{titulo: data.titulo, descripcion: data.descripcion, presentacion: data.presentacion, lote: data.lote, precio_compra: data.precio_compra, precio_venta: data.precio_venta, fecha_vencimiento: data.fecha_vencimiento, idcategoria: data.idcategoria, idmarca: data.idmarca, puntos: data.puntos}, (err, producto_edit) =>{
-            if(err){
-                res.status(500).send({message: 'Error en el servidor'});
-            }else{
-                if(producto_edit){
-                    res.status(200).send({producto: producto_edit});
-                }else{
-                    res.status(403).send({message: 'No se edito el producto'});
-                }
-            }
-        });
+        if (productpExistente) {
+          // Si ya existe un departamento con el mismo nombre, enviar un mensaje de error
+          res.status(400).send({ message: "Ya existe un Producto registrado con el mismo nombre.", data: undefined });
+        } else {
+          // Si no hay producto con el mismo codigo, crear el nuevo producto
+          const nuevoProd = new Producto(data); // Crea un nuevo objeto de producto
+          nuevoProd.empresaId = empresaId; // Asigna empresaId manualmente
+          await nuevoProd.save(); // Guarda el departamento en la base de datos
+          res.status(200).send({ data: nuevoProd });
+        }
+      } else {
+        res.status(403).send({ message: "Sin acceso" }); // Código de error 403 (Acceso prohibido)
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Error interno del servidor", error: error.message });
     }
+};
 
-    
-
-}
-
-function obtener_producto(req,res){
-    var id = req.params['id'];
-
-    Producto.findOne({_id: id}, (err, producto_data) =>{
-        if(err){
-            res.status(500).send({message: 'Error en el servidor'});
-        }else{
-            if(producto_data){
-
-            
-
-                res.status(200).send({producto:producto_data});
-            }else{
-                res.status(403).send({message: 'No existe el registro'});
-            }
-        }
-    });
-}
-
-function eliminar(req,res){
-    var id = req.params['id'];
-
-    Producto.findOneAndRemove({_id:id}, (err, producto_delete) =>{
-        if(err){
-            res.status(500).send({message: 'Error en el servidor'});
-        }else{
-            if(producto_delete){
-                fs.unlinkSync('./uploads/productos/'+producto_delete.imagen, (err)=>{
-                    if(err) throw err;
-                });
-                res.status(200).send({produto:producto_delete});
-            }else{
-                res.status(403).send({message: 'No se elimino ningun registro'});
-            }
-        }
-    })
-}
-
-function update_stock(req,res){
-    let id = req.params['id'];
-    let data = req.body;
-
-    Producto.findById(id,(err,producto_data)=>{
-        if(producto_data){
-            Producto.findByIdAndUpdate(id,{stock: parseInt(producto_data.stock) + parseInt(data.stock)},(err,producto_edit)=>{
-                if(producto_edit){
-                    res.status(200).send({producto:producto_edit});
-                }
-            })
-        }else{
-            res.status(500).send(err);
-        }
-    })
-}
-
-function get_img(req,res) {  
-    var img = req.params['img'];
-
-    if(img != "null"){
-        let path_img = './uploads/productos/'+ img;
-        res.status(200).sendFile(path.resolve(path_img));
-    }else{
-        let path_img = './uploads/productos/default.jpg';
-        res.status(200).sendFile(path.resolve(path_img));
+const listar_productos = async function(req, res){
+    try {
+      if (req.user && req.user.rol === "ADMIN" || req.user.rol === "EMPRESA") {
+        const empresaId = req.user.sub;
+  
+        // Consulta los producto donde la empresaId coincide con la ID de la empresa del usuario
+        const productos = await Producto.find({ empresaId: empresaId });
+  
+        res.status(200).json(productos);
+      } else {
+        res.status(403).send({ message: "Acceso no autorizado" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: 'Error al obtener la lista de productos' });
     }
-}
+  }
+
+
+//metodo paraeliminar departamento
+const eliminar_productos= async function(req, res) {
+    if (req.user && req.user.rol === 'ADMIN' || req.user.rol === "EMPRESA") {
+      var id = req.params['id'];
+  
+      try {
+        // Verificar si el producto está siendo referenciado en la colección de Empleado
+        const productos = await Producto.findOne({ deparId: id });
+  
+        if (productos) {
+          res.status(400).send({ message: 'El departamento está siendo utilizado en la colección de tienda. No se puede eliminar.' });
+        } else {
+          // Si el producto no está siendo utilizado, eliminarlo
+          let reg = await Producto.findByIdAndRemove({ _id: id });
+  
+          if (reg) {
+            res.status(200).send({ data: reg });
+          } else {
+            res.status(404).send({ message: 'Producto no encontrado.' });
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Error al eliminar el producto.' });
+      }
+    } else {
+      res.status(403).send({ message: 'No tiene acceso para eliminar el producto.' });
+    }
+  };
+  
+  //obtener producto
+  const obtener_producto = async function (req, res) {
+    if (req.user) {
+      if (req.user.rol == "ADMIN" || req.user.rol === "EMPRESA" || req.user.rol === "EMPLE") {
+        var id = req.params["id"];
+        try {
+          var reg = await Producto.findById({ _id: id });
+          res.status(200).send({ data: reg });
+        } catch (error) {
+          res.status(200).send({ data: undefined });
+        }
+      } else {
+        res.status(500).send({ message: "No access" });
+      }
+    } else {
+      res.status(500).send({ message: "No access" });
+    }
+  };
 
 
 module.exports ={
-    registrar,
-    listar,
-    listar2,
-    editar,
-    obtener_producto,
-    eliminar,
-    update_stock,
-get_img,
-total
-    
+    registro_producto,
+    listar_productos,
+    eliminar_productos,
+    obtener_producto
 }
