@@ -203,7 +203,7 @@ const actualizar_empleado = async function (req, res) {
 
       // Guardar la nueva foto
       var img_path = req.files.foto.path;
-      var name = img_path.split("\\");
+      var name = img_path.split("/");
       var portada_name = name[2];
       empleadoExistente.foto = portada_name;
     }
