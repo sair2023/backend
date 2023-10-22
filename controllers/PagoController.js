@@ -15,7 +15,7 @@ function calcularIGSS(salarioTotal) {
 
 async function generarNominaPDF(empleados) {
     const doc = new PDFDocument();
-    doc.pipe(fs.createWriteStream('nomina_mensual.pdf'));
+    // doc.pipe(fs.createWriteStream('nomina_mensual.pdf'));
 
     for (const empleado of empleados) {
         const compras = await Tienda.aggregate([
@@ -89,9 +89,18 @@ async function generarNominaMensual(req, res) {
     try {
         const empleados = await Empleado.find({});
         const pdfStream = await generarNominaPDF(empleados);
+
+        pdfStream.on('error', (error) => {
+            console.error(error);
+            res.status(500).send({ error: 'Error al generar la nómina mensual.' });
+        });
+
+        pdfStream.on('finish', () => {
+            console.log('PDF generado con éxito.');
+        });
+
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=nomina_mensual.pdf');
-        res.setHeader('Content-Length', pdfStream.length); // Agrega esta línea
         pdfStream.pipe(res);
     } catch (error) {
         console.error(error);
@@ -99,7 +108,7 @@ async function generarNominaMensual(req, res) {
     }
 }
 
+
 module.exports = {
     generarNominaMensual: generarNominaMensual
 };
-
