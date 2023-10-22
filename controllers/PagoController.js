@@ -90,6 +90,8 @@ async function generarNominaMensual(req, res) {
         const empleados = await Empleado.find({});
         const pdfStream = await generarNominaPDF(empleados);
         res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=nomina_mensual.pdf');
+        res.setHeader('Content-Length', pdfStream.length); // Agrega esta línea
         pdfStream.pipe(res);
     } catch (error) {
         console.error(error);
