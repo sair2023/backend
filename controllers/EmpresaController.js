@@ -218,7 +218,7 @@ const confirm = async (req, res) => {
     // Llama a la función para enviar el correo con los datos
     await enviarCorreoDatosVerificados(user);
     // Redireccionar a la confirmación
-    return res.redirect("https://www.sair.site/login//confirmacion");
+    return res.redirect("https://www.sair.site/login/confirmacion");
   } catch (error) {
     console.log(error);
     return res.json({
