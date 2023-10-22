@@ -129,9 +129,12 @@ const listar_ventas = async function (req, res) {
       const fechaInicio = req.query.fechaInicio || null;
       const fechaFin = req.query.fechaFin || null;
 
+     const empresaId = req.user.sub;
       try {
-          let query = {};
-
+          let query = {
+            empresaId: empresaId,
+          
+          };
           if (fechaInicio && fechaFin) {
               // Filtro por rango de fechas si se proporciona ambas fechas
               query.fecha_venta = {
