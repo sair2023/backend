@@ -303,7 +303,7 @@ const actualizar_empresa = async function (req, res) {
 
       // Guardar la nueva foto
       var img_path = req.files.logo.path;
-      var name = img_path.split("\\");
+      var name = img_path.split("/");
       var portada_name = name[2];
       empresaExistente.logo = portada_name;
     }
