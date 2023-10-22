@@ -24,7 +24,7 @@ const registrarCompra = async function(req, res) {
                     cantidad: compraData.cantidad,
                     total: compraData.total,
                     empleadoId: compraData.empleadoId,
-                    producto: compraData.producto,
+                    productos: compraData.productos,
                     empresaId: empresaId,
                     usuarioId: usuarioId
                 });
